@@ -49,8 +49,8 @@ To run this project locally, follow these steps:
 
 1. **Clone the repository:**
     ```bash
-    git clone https://github.com/your-username/your-repo-name.git
-    cd your-repo-name
+    git clone https://github.com/ansh-lowanshi/movie_search_app
+    cd movie_search_app
     ```
 2. **Create a `.env` file** in the root of the project and add your TMDb API key:
     ```
