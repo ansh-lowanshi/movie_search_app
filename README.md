@@ -6,8 +6,8 @@ A responsive and feature-rich movie search application built with Flutter. This 
 
 A short video demonstrating the app's features, responsiveness, and animations.
 
-**YouTube video demonstration link:**  https://youtu.be/FxOOFg_XK2I
-**APK link:** https://drive.google.com/file/d/1pV9A9JQOQt4xgoSzQ_Ohp-a1XY4SskS4/view?usp=drive_link
+* **YouTube video demonstration link:**  https://youtu.be/FxOOFg_XK2I
+* **APK link:** https://drive.google.com/file/d/1pV9A9JQOQt4xgoSzQ_Ohp-a1XY4SskS4/view?usp=drive_link
 
 <p align="center">
   <img src="https://github.com/user-attachments/assets/a500028d-59c7-4a97-b1f8-97bb65a23898" width="300" />
