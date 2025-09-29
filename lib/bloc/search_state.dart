@@ -1,6 +1,8 @@
 import 'package:equatable/equatable.dart';
-import '../data/models/movie.dart'; // Make sure to import your Movie model
+import '../data/models/movie.dart';
 
+// Base abstract class for all search-related states.
+// Using Equatable allows for easy comparison of state objects to avoid unnecessary rebuilds.
 abstract class SearchState extends Equatable {
   const SearchState();
 
@@ -8,13 +10,13 @@ abstract class SearchState extends Equatable {
   List<Object> get props => [];
 }
 
-// Initial State: The screen is first loaded, nothing has happened yet.
+// Represents the initial state before any search is performed.
 class SearchInitial extends SearchState {}
 
-// Loading State: We've started a search and are waiting for API results.
+// Represents the state when data is being fetched from the API.
 class SearchLoading extends SearchState {}
 
-// Loaded State: The API call was successful and we have a list of movies to display.
+// Represents a successful data fetch, containing the list of movies for the grid.
 class SearchLoaded extends SearchState {
   final List<Movie> movies;
 
@@ -24,7 +26,7 @@ class SearchLoaded extends SearchState {
   List<Object> get props => [movies];
 }
 
-// Error State: The API call failed for some reason.
+// Represents an error state, containing a message to show to the user.
 class SearchError extends SearchState {
   final String message;
 

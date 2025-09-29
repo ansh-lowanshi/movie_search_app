@@ -17,16 +17,19 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen> {
   String _lastQuery = '';
   final TextEditingController _searchController = TextEditingController();
-  Timer? _debounce;
+  Timer? _debounce; // Timer for debouncing user input.
 
+  /// Debounce logic to prevent excessive API calls.
+  /// This function is called every time the user types in the search field.
   void _onSearchChanged(String query) {
+    // If a timer is already active, cancel it.
     if (_debounce?.isActive ?? false) _debounce!.cancel();
+
+    // Start a new timer. The search will only be performed after 500ms of inactivity.
     _debounce = Timer(const Duration(milliseconds: 500), () {
-      if (mounted && query.isNotEmpty) {
+      if (mounted) {
         _lastQuery = query;
         context.read<SearchCubit>().searchMovies(query);
-      } else if (mounted && query.isEmpty) {
-        context.read<SearchCubit>().searchMovies('');
       }
     });
   }
@@ -48,15 +51,13 @@ class _SearchScreenState extends State<SearchScreen> {
                 hintText: 'Search Avatar, The Matrix...',
                 filled: true,
                 fillColor: Colors.white10,
-                // NEW: Added a search icon at the beginning of the text field
                 prefixIcon: const Icon(Icons.search, color: Colors.white70),
                 suffixIcon: IconButton(
                   icon: const Icon(Icons.clear),
                   onPressed: () {
                     _searchController.clear();
                     _onSearchChanged('');
-                    // NEW: This line removes focus and closes the keyboard
-                    FocusScope.of(context).unfocus();
+                    FocusScope.of(context).unfocus(); // Close the keyboard
                   },
                 ),
                 border: OutlineInputBorder(
@@ -68,14 +69,18 @@ class _SearchScreenState extends State<SearchScreen> {
           ),
         ),
       ),
+      // BlocBuilder handles rebuilding the UI in response to state changes from the SearchCubit.
       body: BlocBuilder<SearchCubit, SearchState>(
         builder: (context, state) {
+          // Show initial view with an icon and prompt.
           if (state is SearchInitial) {
             return const _InitialView();
           }
+          // Show a shimmer loading effect while fetching data.
           if (state is SearchLoading) {
             return const _LoadingView();
           }
+          // Show an animated grid of movie cards when data is loaded.
           if (state is SearchLoaded) {
             if (state.movies.isEmpty) {
               return const Center(child: Text('No movies found for that query.'));
@@ -95,6 +100,7 @@ class _SearchScreenState extends State<SearchScreen> {
                     itemCount: state.movies.length,
                     itemBuilder: (context, index) {
                       final movie = state.movies[index];
+                      // Each grid item is animated as it appears on screen.
                       return AnimationConfiguration.staggeredGrid(
                         position: index,
                         duration: const Duration(milliseconds: 375),
@@ -121,13 +127,14 @@ class _SearchScreenState extends State<SearchScreen> {
               ),
             );
           }
+          // Show an error view with a retry button if something goes wrong.
           if (state is SearchError) {
             return _ErrorView(
               message: state.message,
               onRetry: () => context.read<SearchCubit>().searchMovies(_lastQuery),
             );
           }
-          return const SizedBox.shrink();
+          return const SizedBox.shrink(); // Fallback for any other state
         },
       ),
     );
@@ -135,13 +142,16 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   void dispose() {
+    // Clean up resources to prevent memory leaks when the screen is closed.
     _debounce?.cancel();
     _searchController.dispose();
     super.dispose();
   }
 }
 
-// Helper widgets below remain unchanged
+// --- Helper Widgets for different UI states ---
+
+/// Widget to show when the screen is first opened.
 class _InitialView extends StatelessWidget {
   const _InitialView();
   @override
@@ -162,6 +172,7 @@ class _InitialView extends StatelessWidget {
   }
 }
 
+/// A shimmer loading effect widget that mimics the grid layout.
 class _LoadingView extends StatelessWidget {
   const _LoadingView();
   @override
@@ -188,6 +199,7 @@ class _LoadingView extends StatelessWidget {
   }
 }
 
+/// Widget to display an error message and a retry button.
 class _ErrorView extends StatelessWidget {
   final String message;
   final VoidCallback onRetry;

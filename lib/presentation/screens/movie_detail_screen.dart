@@ -12,42 +12,48 @@ class MovieDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // CustomScrollView allows for rich scrolling effects like the collapsing app bar.
       body: CustomScrollView(
         slivers: [
+          // The collapsing app bar that shows the movie poster.
           SliverAppBar(
             expandedHeight: 400.0,
-            pinned: true,
+            pinned: true, // The app bar remains visible at the top when collapsed.
             flexibleSpace: FlexibleSpaceBar(
               title: Text(
                 movie.title,
                 style: const TextStyle(shadows: [Shadow(blurRadius: 4, color: Colors.black)]),
               ),
+              // The background of the app bar, which includes multiple layers for a rich visual effect.
               background: Stack(
                 fit: StackFit.expand,
                 children: [
+                  // Layer 1: A blurred version of the poster to fill the background on wide screens.
+                  ImageFiltered(
+                    imageFilter: ImageFilter.blur(sigmaX: 7.0, sigmaY: 7.0),
+                    child: CachedNetworkImage(
+                      imageUrl: movie.fullImageUrl,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  // Layer 2: The main, non-cropped poster, centered.
                   CachedNetworkImage(
                     imageUrl: movie.fullImageUrl,
-                    fit: BoxFit.cover,
+                    fit: BoxFit.contain,
                     placeholder: (context, url) => Container(color: Colors.black38),
                     errorWidget: (context, url, error) => Container(
                       color: Colors.black38,
                       child: const Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(
-                            Icons.movie_creation_outlined,
-                            color: Colors.white54,
-                            size: 50,
-                          ),
+                          Icon(Icons.movie_creation_outlined, color: Colors.white54, size: 50),
                           SizedBox(height: 8),
-                          Text(
-                            "Image not available",
-                            style: TextStyle(color: Colors.white54),
-                          ),
+                          Text("Image not available", style: TextStyle(color: Colors.white54)),
                         ],
                       ),
                     ),
                   ),
+                  // Layer 3: A gradient at the bottom to make the title readable when the bar is expanded.
                   const DecoratedBox(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
@@ -58,6 +64,7 @@ class MovieDetailScreen extends StatelessWidget {
                       ),
                     ),
                   ),
+                  // Layer 4: A gradient at the top to make the back button and status bar icons visible.
                   const DecoratedBox(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
@@ -72,6 +79,7 @@ class MovieDetailScreen extends StatelessWidget {
               ),
             ),
           ),
+          // The main scrollable content of the screen.
           SliverList(
             delegate: SliverChildListDelegate([
               Padding(
@@ -79,6 +87,7 @@ class MovieDetailScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // A row of info chips for rating and release date.
                     Wrap(
                       spacing: 12.0,
                       runSpacing: 8.0,
@@ -95,6 +104,7 @@ class MovieDetailScreen extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 24),
+                    // A row of action buttons (UI only, no functionality).
                     const Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
@@ -105,12 +115,11 @@ class MovieDetailScreen extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 24),
-                    
-                    // --- THIS IS THE UPDATED WIDGET ---
+                    // The "Overview" section.
                     Text(
                       'Overview',
                       style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        color: Theme.of(context).primaryColor, // Use the theme's accent color
+                        color: Theme.of(context).primaryColor,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -123,7 +132,7 @@ class MovieDetailScreen extends StatelessWidget {
                         color: Color(0xFFE0E0E0),
                       ),
                     ),
-                    const SizedBox(height: 50),
+                    const SizedBox(height: 50), // Extra space at bottom for better scrolling
                   ],
                 ),
               ),
@@ -135,6 +144,9 @@ class MovieDetailScreen extends StatelessWidget {
   }
 }
 
+// --- Helper Widgets for this screen ---
+
+/// A reusable chip with a frosted glass effect for displaying movie info.
 class _InfoChip extends StatelessWidget {
   final IconData icon;
   final String label;
@@ -161,6 +173,7 @@ class _InfoChip extends StatelessWidget {
   }
 }
 
+/// A reusable action button with an icon and a label.
 class _ActionButton extends StatelessWidget {
   final IconData icon;
   final String label;
